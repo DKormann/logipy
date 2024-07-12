@@ -1,6 +1,6 @@
 #%%
-from engine import Input, update, run
-from factory.gates import Nand, And, Or, Not, Nor, Xor, Xnor
+from logisim.engine import Input, update, run
+from logisim.gates import Nand, And, Or, Not, Nor, Xor, Xnor
 from typing import Callable
 import itertools
 
