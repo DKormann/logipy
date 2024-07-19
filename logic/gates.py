@@ -1,5 +1,5 @@
 #%%
-from logipy.engine import Gate, Input, run, update, Composite
+from logic.engine import Gate, Input, run, update, Composite
 
 i1, i2 = Input(), Input()
 Nand = Gate(lambda *x: (not all(x),), name="Nand")

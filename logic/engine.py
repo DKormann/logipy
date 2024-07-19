@@ -6,27 +6,27 @@ from helpers import DEBUG
 
 class Node:
   name= "Node"
-  def __init__(self, fn:Callable, outsize:int=1):
+  def __init__(self,inputs, fn:Callable , outsize:int=1):
     self.fn = fn
-    self.inputs = []
+    self.inputs = inputs
     self.outsize = outsize
+  def __repr__(self) -> str:
+    return f"{self.name}[{len(self.inputs)}->{self.outsize}]"
 
 class Input(Node):
   name = "Input"
   def __init__(self, value:bool = False):
     self.value: bool = value
-    super().__init__(lambda : (self.value,))
-  def set(self, value:bool):
-    self.value = value
+    super().__init__([], fn=lambda: (self.value,))
+  def set(self, value:bool): self.value = value
 
-def Gate(fn:Callable, n:Optional[int]=None, name=None, outsize=1):
-  fn = lru_cache(8)(fn)
+def Gate(fn:Callable, n:Optional[int]=None, name=None, outsize=1, cached=True):
+  if cached: fn = lru_cache(8)(fn)
   class _Gate(Node):
     def __init__(self, *inputs:Node):
-      assert isinstance(inputs[0], Node)
+      assert isinstance(inputs[0], Node), f"{inputs}"
       if n is not None: assert n == sum([i.outsize for i in inputs])
-      super().__init__(fn, outsize = outsize)
-      self.inputs = inputs
+      super().__init__(inputs, fn=fn, outsize = outsize)
       self.name = name
   return _Gate
 
@@ -54,8 +54,7 @@ def update():
   visited.clear()
 
 
-def run(*gate: Gate):
-  return tuple(sum((ceval(g) for g in gate), tuple()))
+def run(*gate: Gate): return tuple(sum((ceval(g) for g in gate), tuple()))
 
 
 def Composite(inputs:List[Input], sinks: List[Gate], name=None):
@@ -73,7 +72,6 @@ def Composite(inputs:List[Input], sinks: List[Gate], name=None):
   inputs = [replace[i] for i in inputs]
 
   def fn(*data:bool):
-    global ceval
     for i,d in zip(inputs,data): i.set(d)
     return tuple(sum((ceval(g) for g in sinks), tuple()))  
 

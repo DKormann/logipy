@@ -1,6 +1,6 @@
 #%%
-from logisim.engine import Input, update, run
-from logisim.gates import Nand, And, Or, Not, Nor, Xor, Xnor
+from logic.engine import Input, update, run
+from logic.gates import Nand, And, Or, Not, Nor, Xor, Xnor
 from typing import Callable
 import itertools
 
@@ -27,3 +27,5 @@ test_gate( Nor, lambda *x: (not any(x),), 2)
 test_gate( Xor, lambda x,y: (x != y,), 2)
 
 test_gate( Xnor, lambda x,y: (x == y,), 2)
+
+
